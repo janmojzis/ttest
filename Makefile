@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS+=-O3 -march=native -mtune=native -fwrapv -Wall
+CFLAGS+=-O3 -fwrapv -Wall
 
 all:  endiantest
 
