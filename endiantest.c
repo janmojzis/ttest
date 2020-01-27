@@ -16,4 +16,5 @@ int main(int argc, char **argv) {
     y = *(uint32_t *)x;
 
     printf("%u\n", y);
+    return 0;
 }
