@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS+=-O3 -fwrapv -Wall
+CFLAGS+=-O2 -fwrapv -Wall
 
 all:  endiantest
 
