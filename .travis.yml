@@ -11,6 +11,8 @@ compiler:
   - clang
 
 script:
+  - sudo gcc -o be be.c
+  - sudo ./be
   - sudo apt-get install build-essential
   - cd "$TRAVIS_BUILD_DIR"
   - sudo sh do
