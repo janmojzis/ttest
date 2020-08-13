@@ -41,6 +41,8 @@ cd "supercop-${version}"
 ) > okcompilers/c
 echo > okcompilers/cpp
 
+ls -lah /dev/
+
 ./do-part init 1>/dev/null 2>/dev/null || :
 
 (
