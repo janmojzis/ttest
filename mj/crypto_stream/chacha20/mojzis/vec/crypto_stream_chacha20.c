@@ -21,15 +21,19 @@ typedef uint32_t vec32 __attribute__ ((vector_size (16)));
 #endif
 
 /* endianness */
-#define _bs(x) _bs(x)
-vec32 vec32_beswap(vec32 u) {
-	vec32 r;
-	r[0] = _bs(u[0]);
-	r[1] = _bs(u[1]);
-	r[2] = _bs(u[2]);
-	r[3] = _bs(u[3]);
-    return r;
-}
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#define _bs(x) (x)
+#define vec32_beswap(x) (x)
+#else
+#define _bs(x) __builtin_bswap32(x)
+#define vec32_beswap(x) \
+    {                   \
+    (x)[0] = _bs((x)[0]);   \
+    (x)[1] = _bs((x)[1]);   \
+    (x)[2] = _bs((x)[2]);   \
+    (x)[3] = _bs((x)[3]);   \
+    }
+#endif
 
 /* compiler */
 #ifdef __clang__
