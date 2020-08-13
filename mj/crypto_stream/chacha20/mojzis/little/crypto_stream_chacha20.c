@@ -37,14 +37,7 @@ typedef uint32_t vec32 __attribute__ ((vector_size (BLOCKS * 16)));
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define _le(x) (x)
 #else
-static uint32_t _le(uint32_t u) {
-    unsigned char x[4];
-    x[0] = u; u >>= 8;
-    x[1] = u; u >>= 8;
-    x[2] = u; u >>= 8;
-    x[3] = u;
-    return *(uint32_t *)x;
-}
+#define _le(x) __builtin_bswap(x)
 #endif
 
 #if BLOCKS == 2
