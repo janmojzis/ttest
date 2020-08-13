@@ -25,24 +25,12 @@ typedef uint32_t vec32 __attribute__ ((vector_size (16)));
 #define vec32_beswap(x) (x)
 #else
 vec32 vec32_beswap(vec32 u) {
-    unsigned char x[16];
-    x[ 0] = u[0]; u[0] >>= 8;
-    x[ 1] = u[0]; u[0] >>= 8;
-    x[ 2] = u[0]; u[0] >>= 8;
-    x[ 3] = u[0];
-    x[ 4] = u[1]; u[1] >>= 8;
-    x[ 5] = u[1]; u[1] >>= 8;
-    x[ 6] = u[1]; u[1] >>= 8;
-    x[ 7] = u[1];
-    x[ 8] = u[2]; u[2] >>= 8;
-    x[ 9] = u[2]; u[2] >>= 8;
-    x[10] = u[2]; u[2] >>= 8;
-    x[11] = u[2];
-    x[12] = u[3]; u[3] >>= 8;
-    x[13] = u[3]; u[3] >>= 8;
-    x[14] = u[3]; u[3] >>= 8;
-    x[15] = u[3];
-    return *(vec32 *)x;
+    vec r;
+    r[0] = __builtin_bswap32(u[3]);
+    r[1] = __builtin_bswap32(u[2]);
+    r[2] = __builtin_bswap32(u[1]);
+    r[3] = __builtin_bswap32(u[0]);
+    return r;
 }
 #endif
 
