@@ -43,7 +43,8 @@ echo > okcompilers/cpp
 
 ls -lah /dev/
 
-./do-part init 1>/dev/null 2>/dev/null || :
+./do-part init || :
+echo "========================================================="
 
 (
   #echo "keccak"
