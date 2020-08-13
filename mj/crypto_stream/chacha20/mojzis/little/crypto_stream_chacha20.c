@@ -62,10 +62,10 @@ typedef uint32_t vec32 __attribute__ ((vector_size (BLOCKS * 16)));
 #define vec32_EXPAND(a, b, c, d) (vec32) { _le(a), _le(b), _le(c), _le(d) }
 #define BLOCK_REORDER(a, b, c, d)                                   \
     {                                                               \
-        vec32 aa = { _le(a[0]), _le(a[1]), _le(a[2]), _le(a[3]) };  \
-        vec32 bb = { _le(b[0]), _le(b[1]), _le(b[2]), _le(b[3]) };  \
-        vec32 cc = { _le(c[0]), _le(c[1]), _le(c[2]), _le(c[3]) };  \
-        vec32 dd = { _le(d[0]), _le(d[1]), _le(d[2]), _le(d[3]) };  \
+        vec32 aa = { _le(a[3]), _le(a[2]), _le(a[1]), _le(a[0]) };  \
+        vec32 bb = { _le(b[3]), _le(b[2]), _le(b[1]), _le(b[0]) };  \
+        vec32 cc = { _le(c[3]), _le(c[2]), _le(c[1]), _le(c[0]) };  \
+        vec32 dd = { _le(d[3]), _le(d[2]), _le(d[1]), _le(d[0]) };  \
         a = aa; b = bb; c = cc; d = dd;                             \
     }
 #endif
