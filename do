@@ -66,3 +66,4 @@ echo > okcompilers/cpp
     grep ' ok ' "bench/${shorthostname}/data" | cut -d ' ' -f 10,13,14 | sort -n
   done
 )
+cat "bench/${shorthostname}/data"
