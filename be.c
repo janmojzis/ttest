@@ -11,10 +11,10 @@ typedef uint32_t vec32 __attribute__ ((vector_size (16)));
 #else
 vec32 vec32_beswap(vec32 u) {
     vec32 r;
-    r[0] = __builtin_bswap32(u[3]);
-    r[1] = __builtin_bswap32(u[2]);
-    r[2] = __builtin_bswap32(u[1]);
-    r[3] = __builtin_bswap32(u[0]);
+    r[0] = __builtin_bswap32(u[0]);
+    r[1] = __builtin_bswap32(u[1]);
+    r[2] = __builtin_bswap32(u[2]);
+    r[3] = __builtin_bswap32(u[3]);
     return r;
 }
 #endif
