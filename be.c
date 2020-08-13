@@ -21,14 +21,18 @@ vec32 vec32_beswap(vec32 u) {
 
 int main() {
 
-    char x[16] = {0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15};
-    vec32 r = vec32_beswap(*(vec32 *)x);
-    vec32 z = {0, 1, 2, 4};
-    z = vec32_beswap(z);
+    unsigned char x[16] = {0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15};
+    vec32 r = *(vec32 *)x;
+    vec32 z = {0, 1, 2, 3};
 
-    printf("%u,%u,%u,%u\n", r[0], r[1], r[2], r[3]);
-    printf("%u,%u,%u,%u\n", z[0], z[1], z[2], z[3]);
+    printf("z: %u,%u,%u,%u\n", z[0], z[1], z[2], z[3]);
+    z = vec32_beswap(z);
+    printf("Z: %u,%u,%u,%u\n", z[0], z[1], z[2], z[3]);
+    printf("r: %u,%u,%u,%u\n", r[0], r[1], r[2], r[3]);
+    r = vec32_beswap(r);
+    printf("R: %u,%u,%u,%u\n", r[0], r[1], r[2], r[3]);
 }
+
 
 
 
