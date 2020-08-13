@@ -23,16 +23,8 @@ typedef uint32_t vec32 __attribute__ ((vector_size (16)));
 /* endianness */
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #define _bs(x) (x)
-#define vec32_beswap(x) (x)
 #else
 #define _bs(x) __builtin_bswap32(x)
-#define vec32_beswap(x) \
-    {                   \
-    (x)[0] = _bs((x)[0]);   \
-    (x)[1] = _bs((x)[1]);   \
-    (x)[2] = _bs((x)[2]);   \
-    (x)[3] = _bs((x)[3]);   \
-    }
 #endif
 
 /* compiler */
@@ -45,6 +37,14 @@ typedef uint32_t vec32 __attribute__ ((vector_size (16)));
 #define SHUFFLE1(x)  (vec32)vec32_shuffle(x, (vec32){1,2,3,0})
 #define SHUFFLE2(x)  (vec32)vec32_shuffle(x, (vec32){2,3,0,1})
 #define SHUFFLE3(x)  (vec32)vec32_shuffle(x, (vec32){3,0,1,2})
+#define BLOCK_REORDER(a, b, c, d)                                   \
+    {                                                               \
+        vec32 aa = { _bs(a[0]), _bs(a[1]), _bs(a[2]), _bs(a[3]) };  \
+        vec32 bb = { _bs(b[0]), _bs(b[1]), _bs(b[2]), _bs(b[3]) };  \
+        vec32 cc = { _bs(c[0]), _bs(c[1]), _bs(c[2]), _bs(c[3]) };  \
+        vec32 dd = { _bs(d[0]), _bs(d[1]), _bs(d[2]), _bs(d[3]) };  \
+        a = aa; b = bb; c = cc; d = dd;                             \
+    }
 
 #define TWOROUNDS(a, b, c, d)                           \
     a += b; d ^= a; d = ROTATE(d, 16);                  \
@@ -84,10 +84,7 @@ typedef uint32_t vec32 __attribute__ ((vector_size (16)));
     (d) += (_n) + (vec32){(x), (x) >> 32, 0, 0};
                                                     
 #define BLOCK_XOR(o, i, a, b, c, d)                     \
-    (a) = vec32_beswap(a);                              \
-    (b) = vec32_beswap(b);                              \
-    (c) = vec32_beswap(c);                              \
-    (d) = vec32_beswap(d);                              \
+	BLOCK_REORDER(a, b, c, d)							\
     *(vec32 *)((o)     ) = (a) ^ *(vec32 *)((i)     );  \
     *(vec32 *)((o) + 16) = (b) ^ *(vec32 *)((i) + 16);  \
     *(vec32 *)((o) + 32) = (c) ^ *(vec32 *)((i) + 32);  \
