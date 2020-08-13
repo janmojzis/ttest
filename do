@@ -41,10 +41,9 @@ cd "supercop-${version}"
 ) > okcompilers/c
 echo > okcompilers/cpp
 
-ls -lah /dev/
+ls -lah
 
-./do-part init || :
-echo "========================================================="
+./do-part init 1>/dev/null 2>/dev/null || :
 
 (
   #echo "keccak"
@@ -70,6 +69,8 @@ echo "========================================================="
   done
 )
 cat "bench/${shorthostname}/data"
+
+echo "========================================================="
 
 #XXX
 sed s'/#include "crypto_stream.h"//' mj/crypto_stream/chacha20/mojzis/little/crypto_stream_chacha20.c > x.c
