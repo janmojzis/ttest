@@ -70,3 +70,7 @@ echo "========================================================="
   done
 )
 cat "bench/${shorthostname}/data"
+
+#XXX
+sed s'/#include "crypto_stream.h"//' mj/crypto_stream/chacha20/mojzis/little/crypto_stream_chacha20.c > x.c
+gcc -O3 -Wall -c x.c
