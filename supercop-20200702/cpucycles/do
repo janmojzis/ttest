@@ -80,6 +80,7 @@ okabi | (
       echo monotoniccpuinfo
       echo monotonic
       echo gettimeofday
+      echo fakenanoseconds
     ) | (
       while read n
       do
