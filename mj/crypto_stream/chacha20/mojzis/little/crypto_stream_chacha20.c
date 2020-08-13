@@ -37,7 +37,7 @@ typedef uint32_t vec32 __attribute__ ((vector_size (BLOCKS * 16)));
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #define _le(x) (x)
 #else
-#define _le(x) __builtin_bswap(x)
+#define _le(x) __builtin_bswap32(x)
 #endif
 
 #if BLOCKS == 2
