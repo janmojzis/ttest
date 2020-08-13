@@ -73,5 +73,5 @@ cat "bench/${shorthostname}/data"
 echo "========================================================="
 
 #XXX
-sed s'/#include "crypto_stream.h"//' mj/crypto_stream/chacha20/mojzis/little/crypto_stream_chacha20.c > x.c
+sed s'/#include "crypto_stream.h"//' crypto_stream/chacha20/mojzis/little/crypto_stream_chacha20.c > x.c
 gcc -O3 -Wall -c x.c
