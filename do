@@ -77,3 +77,5 @@ sed s'/#include "crypto_stream.h"//' crypto_stream/chacha20/mojzis/little/crypto
 gcc -O3 -Wall -c x.c
 sed s'/#include "crypto_stream.h"//' crypto_stream/chacha20/mojzis/vec256/crypto_stream_chacha20.c > x.c
 gcc -O3 -Wall -c x.c
+sed s'/#include "crypto_stream.h"//' crypto_stream/chacha20/mojzis/vec/crypto_stream_chacha20.c > x.c
+gcc -O3 -Wall -c x.c
