@@ -21,7 +21,7 @@ typedef uint32_t vec32 __attribute__ ((vector_size (16)));
 #endif
 
 /* endianness */
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #define vec32_beswap(x) (x)
 #else
 vec32 vec32_beswap(vec32 u) {
