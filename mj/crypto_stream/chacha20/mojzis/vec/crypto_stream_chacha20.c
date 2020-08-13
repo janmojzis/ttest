@@ -22,14 +22,16 @@ typedef uint32_t vec32 __attribute__ ((vector_size (16)));
 
 /* endianness */
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#define _bs(x) (x)
 #define vec32_beswap(x) (x)
 #else
+#define _bs(x) __builtin_bswap32(x)
 vec32 vec32_beswap(vec32 u) {
-    vec r;
-    r[0] = __builtin_bswap32(u[0]);
-    r[1] = __builtin_bswap32(u[1]);
-    r[2] = __builtin_bswap32(u[2]);
-    r[3] = __builtin_bswap32(u[3]);
+	vec32 r;
+	r[0] = __builtin_bswap32(u[3]);
+	r[1] = __builtin_bswap32(u[2]);
+	r[2] = __builtin_bswap32(u[1]);
+	r[3] = __builtin_bswap32(u[0]);
     return r;
 }
 #endif
@@ -92,24 +94,20 @@ vec32 vec32_beswap(vec32 u) {
     *(vec32 *)((o) + 32) = (c) ^ *(vec32 *)((i) + 32);  \
     *(vec32 *)((o) + 48) = (d) ^ *(vec32 *)((i) + 48);
 
-static const unsigned char s[16] = "expand 32-byte k";
+static const unsigned char sx[16] = "expand 32-byte k";
 
-int crypto_stream_xor(unsigned char *c, const unsigned char *m, unsigned long long l, const unsigned char *n, const unsigned char *k) {
+int crypto_stream_xor(unsigned char *c, const unsigned char *m, unsigned long long l, const unsigned char *nx, const unsigned char *kx) {
 
-    vec32 s0 = vec32_beswap(*(vec32 *)(s));
-    vec32 k0 = vec32_beswap(*(vec32 *)(k));
-    vec32 k1 = vec32_beswap(*(vec32 *)(k + 16));
-    vec32 n0;
     uint64_t u = 0;
+    uint32_t *k = (uint32_t *)kx;
+    uint32_t *s = (uint32_t *)sx;
+    uint32_t *n = (uint32_t *)nx;
+    vec32 n0 = {         0,        0,  _bs(n[0]), _bs(n[1]) };
+    vec32 k0 = { _bs(k[0]), _bs(k[1]), _bs(k[2]), _bs(k[3]) };
+    vec32 k1 = { _bs(k[4]), _bs(k[5]), _bs(k[6]), _bs(k[7]) };
+    vec32 s0 = { _bs(s[0]), _bs(s[1]), _bs(s[2]), _bs(s[3]) };
 
     if (!l) return 0;
-
-    {
-        unsigned char nonce[16] = {0};
-        long long j;
-        for (j = 0; j < 8; ++j) nonce[j + 8] = n[j];
-        n0 = vec32_beswap(*(vec32 *)(nonce));
-    }
 
 #if BLOCKS >= 3
     while (l >= 192) {
