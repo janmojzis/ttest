@@ -189,12 +189,13 @@ int crypto_stream_xor(unsigned char *c, const unsigned char *m, unsigned long lo
     }
     if (l) {
         __attribute__((aligned(16))) unsigned char b[BLOCKS * 64] = {0};
+        vec32 *bb = (vec32 *)b;
         long long j;
         BLOCK_SETUP(x0, x1,  x2,  x3, s0, k0, k1, n0, u);
         BLOCK(x0, x1, x2, x3);
         BLOCK_FINALIZE(x0, x1,  x2,  x3, s0, k0, k1, n0, u);
         for (j = 0; j < l; ++j) b[j] = m[j];
-        BLOCK_XOR(b, b, x0, x1, x2, x3);
+        BLOCK_XOR(bb, bb, x0, x1, x2, x3);
         for (j = 0; j < l; ++j) c[j] = b[j];
     }
     return 0;
