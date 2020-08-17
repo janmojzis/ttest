@@ -35,9 +35,9 @@ typedef uint32_t vec32 __attribute__ ((vector_size (BLOCKS * 16)));
 
 /* endianness */
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define _le(x) (x)
+#define _bs(x) (x)
 #else
-#define _le(x) __builtin_bswap32(x)
+#define _bs(x) __builtin_bswap32(x)
 #endif
 
 #if BLOCKS == 2
@@ -45,13 +45,13 @@ typedef uint32_t vec32 __attribute__ ((vector_size (BLOCKS * 16)));
 #define SHUFFLE2(x) (vec32) vec32_shuffle(x, (vec32) { 2, 3, 0, 1, 6, 7, 4, 5 })
 #define SHUFFLE3(x) (vec32) vec32_shuffle(x, (vec32) { 3, 0, 1, 2, 7, 4, 5, 6 })
 #define NONCE(n0, x) ((vec32) { (x), (x) >> 32, 0, 0, (x) + 1, ((x) + 1) >> 32, 0, 0 } + n0);
-#define vec32_EXPAND(a, b, c, d) (vec32) { _le(a), _le(b), _le(c), _le(d), _le(a), _le(b), _le(c), _le(d) }
+#define vec32_EXPAND(a, b, c, d) (vec32) { _bs(a), _bs(b), _bs(c), _bs(d), _bs(a), _bs(b), _bs(c), _bs(d) }
 #define BLOCK_REORDER(a, b, c, d)                                                                               \
     {                                                                                                           \
-        vec32 aa = { _le(a[0]), _le(a[1]), _le(a[2]), _le(a[3]), _le(b[0]), _le(b[1]), _le(b[2]), _le(b[3]) };  \
-        vec32 bb = { _le(c[0]), _le(c[1]), _le(c[2]), _le(c[3]), _le(d[0]), _le(d[1]), _le(d[2]), _le(d[3]) };  \
-        vec32 cc = { _le(a[4]), _le(a[5]), _le(a[6]), _le(a[7]), _le(b[4]), _le(b[5]), _le(b[6]), _le(b[7]) };  \
-        vec32 dd = { _le(c[4]), _le(c[5]), _le(c[6]), _le(c[7]), _le(d[4]), _le(d[5]), _le(d[6]), _le(d[7]) };  \
+        vec32 aa = { _bs(a[0]), _bs(a[1]), _bs(a[2]), _bs(a[3]), _bs(b[0]), _bs(b[1]), _bs(b[2]), _bs(b[3]) };  \
+        vec32 bb = { _bs(c[0]), _bs(c[1]), _bs(c[2]), _bs(c[3]), _bs(d[0]), _bs(d[1]), _bs(d[2]), _bs(d[3]) };  \
+        vec32 cc = { _bs(a[4]), _bs(a[5]), _bs(a[6]), _bs(a[7]), _bs(b[4]), _bs(b[5]), _bs(b[6]), _bs(b[7]) };  \
+        vec32 dd = { _bs(c[4]), _bs(c[5]), _bs(c[6]), _bs(c[7]), _bs(d[4]), _bs(d[5]), _bs(d[6]), _bs(d[7]) };  \
         a = aa; b = bb; c = cc; d = dd;                                                                         \
     }
 #else
@@ -59,13 +59,13 @@ typedef uint32_t vec32 __attribute__ ((vector_size (BLOCKS * 16)));
 #define SHUFFLE2(x) (vec32)vec32_shuffle(x, (vec32) { 2, 3, 0, 1 })
 #define SHUFFLE3(x) (vec32)vec32_shuffle(x, (vec32) { 3, 0, 1, 2 })
 #define NONCE(n0, x) ((vec32) { (x), (x) >> 32, 0, 0 } + n0);
-#define vec32_EXPAND(a, b, c, d) (vec32) { _le(a), _le(b), _le(c), _le(d) }
+#define vec32_EXPAND(a, b, c, d) (vec32) { _bs(a), _bs(b), _bs(c), _bs(d) }
 #define BLOCK_REORDER(a, b, c, d)                                   \
     {                                                               \
-        vec32 aa = { _le(a[3]), _le(a[2]), _le(a[1]), _le(a[0]) };  \
-        vec32 bb = { _le(b[3]), _le(b[2]), _le(b[1]), _le(b[0]) };  \
-        vec32 cc = { _le(c[3]), _le(c[2]), _le(c[1]), _le(c[0]) };  \
-        vec32 dd = { _le(d[3]), _le(d[2]), _le(d[1]), _le(d[0]) };  \
+        vec32 aa = { _bs(a[0]), _bs(a[1]), _bs(a[2]), _bs(a[3]) };  \
+        vec32 bb = { _bs(b[0]), _bs(b[1]), _bs(b[2]), _bs(b[3]) };  \
+        vec32 cc = { _bs(c[0]), _bs(c[1]), _bs(c[2]), _bs(c[3]) };  \
+        vec32 dd = { _bs(d[0]), _bs(d[1]), _bs(d[2]), _bs(d[3]) };  \
         a = aa; b = bb; c = cc; d = dd;                             \
     }
 #endif
