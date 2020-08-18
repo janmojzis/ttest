@@ -37,7 +37,14 @@ typedef uint32_t vec32 __attribute__ ((vector_size (BLOCKS * 16)));
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #define _bs(x) (x)
 #else
-#define _bs(x) __builtin_bswap32(x)
+static uint32_t _bs(uint32_t u) {
+    unsigned char x[4];
+    x[0] = u; u >>= 8;
+    x[1] = u; u >>= 8;
+    x[2] = u; u >>= 8;
+    x[3] = u;
+    return *(uint32_t *)x;
+}
 #endif
 
 #if BLOCKS == 2
@@ -119,18 +126,15 @@ typedef uint32_t vec32 __attribute__ ((vector_size (BLOCKS * 16)));
     *(vec32 *)((o) + 32 * BLOCKS) = (c) ^ *(vec32 *)((i) + 32 * BLOCKS);\
     *(vec32 *)((o) + 48 * BLOCKS) = (d) ^ *(vec32 *)((i) + 48 * BLOCKS);
 
-static __attribute__((aligned(16))) const unsigned char sx[16] = "expand 32-byte k";
+static __attribute__((aligned(16))) const unsigned char s[16] = "expand 32-byte k";
 
-int crypto_stream_xor(unsigned char *c, const unsigned char *m, unsigned long long l, const unsigned char *nx, const unsigned char *kx) {
+int crypto_stream_xor(unsigned char *c, const unsigned char *m, unsigned long long l, const unsigned char *n, const unsigned char *k) {
 
     uint64_t u = 0;
-    uint32_t *k = (uint32_t *)kx;
-    uint32_t *s = (uint32_t *)sx;
-    uint32_t *n = (uint32_t *)nx;
-    vec32 n0 = vec32_EXPAND(   0,    0, n[0], n[1]);
-    vec32 k0 = vec32_EXPAND(k[0], k[1], k[2], k[3]);
-    vec32 k1 = vec32_EXPAND(k[4], k[5], k[6], k[7]);
-    vec32 s0 = vec32_EXPAND(s[0], s[1], s[2], s[3]);
+    vec32 n0 = vec32_EXPAND(              (     0),              (     0), *(uint32_t *) (n     ), *(uint32_t *)(n +  4));
+    vec32 k0 = vec32_EXPAND(*(uint32_t *) (k     ), *(uint32_t *)(k +  4), *(uint32_t *) (k +  8), *(uint32_t *)(k + 12));
+    vec32 k1 = vec32_EXPAND(*(uint32_t *) (k + 16), *(uint32_t *)(k + 20), *(uint32_t *) (k + 24), *(uint32_t *)(k + 28));
+    vec32 s0 = vec32_EXPAND(*(uint32_t *) (s     ), *(uint32_t *)(s +  4), *(uint32_t *) (s +  8), *(uint32_t *)(s + 12));
 
     if (!l) return 0;
 
@@ -181,14 +185,13 @@ int crypto_stream_xor(unsigned char *c, const unsigned char *m, unsigned long lo
         m += BLOCKS * 64;
     }
     if (l) {
-        __attribute__((aligned(16))) unsigned char b[BLOCKS * 64] = {0};
-        vec32 *bb = (vec32 *)b;
+        unsigned char b[BLOCKS * 64] = {0};
         long long j;
         BLOCK_SETUP(x0, x1,  x2,  x3, s0, k0, k1, n0, u);
         BLOCK(x0, x1, x2, x3);
         BLOCK_FINALIZE(x0, x1,  x2,  x3, s0, k0, k1, n0, u);
         for (j = 0; j < l; ++j) b[j] = m[j];
-        BLOCK_XOR(bb, bb, x0, x1, x2, x3);
+        BLOCK_XOR(b, b, x0, x1, x2, x3);
         for (j = 0; j < l; ++j) c[j] = b[j];
     }
     return 0;
