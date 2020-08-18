@@ -19,6 +19,15 @@ vec32 vec32_beswap(vec32 u) {
 }
 #endif
 
+static uint32_t _bs(uint32_t u) {
+    unsigned char x[4];
+    x[0] = u; u >>= 8;
+    x[1] = u; u >>= 8;
+    x[2] = u; u >>= 8;
+    x[3] = u;
+    return *(uint32_t *)x;
+}
+
 int main() {
 
     unsigned char x[16] = {0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15};
@@ -31,6 +40,8 @@ int main() {
     printf("r: %u,%u,%u,%u\n", r[0], r[1], r[2], r[3]);
     r = vec32_beswap(r);
     printf("R: %u,%u,%u,%u\n", r[0], r[1], r[2], r[3]);
+
+    printf("%u,%u\n", 7, _bs(7));
 }
 
 
