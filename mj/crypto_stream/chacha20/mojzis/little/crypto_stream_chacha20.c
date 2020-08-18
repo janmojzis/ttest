@@ -208,3 +208,4 @@ int crypto_stream(unsigned char *c, unsigned long long l, const unsigned char *n
     return crypto_stream_xor(c, c, l, ncopy, kcopy);
 }
 /* clang-format on */
+
