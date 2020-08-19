@@ -97,17 +97,21 @@ static uint32_t _bs(uint32_t u) {
 /* chacha */
 
 #define ROTATE(x, c) ((x) << (c)) ^ ((x) >> (32 - (c)))
+#define ROTATE07(x) ((x) << ((vec32){ 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7})) ^ ((x) >> ((vec32){25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25}))
+#define ROTATE08(x) ((x) << ((vec32){ 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8})) ^ ((x) >> ((vec32){24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24}))
+#define ROTATE12(x) ((x) << ((vec32){12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12})) ^ ((x) >> ((vec32){20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20}))
+#define ROTATE16(x) ((x) << ((vec32){16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16})) ^ ((x) >> ((vec32){16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16}))
 
 #define TWOROUNDS(a, b, c, d)                           \
-    a += b; d ^= a; d = ROTATE(d, 16);                  \
-    c += d; b ^= c; b = ROTATE(b, 12);                  \
-    a += b; d ^= a; d = ROTATE(d, 8);                   \
-    c += d; b ^= c; b = ROTATE(b, 7);                   \
+    a += b; d ^= a; d = ROTATE16(d);                  \
+    c += d; b ^= c; b = ROTATE12(b);                  \
+    a += b; d ^= a; d = ROTATE08(d);                   \
+    c += d; b ^= c; b = ROTATE07(b);                   \
     b = SHUFFLE1(b); c = SHUFFLE2(c);  d = SHUFFLE3(d); \
-    a += b; d ^= a; d = ROTATE(d, 16);                  \
-    c += d; b ^= c; b = ROTATE(b, 12);                  \
-    a += b; d ^= a; d = ROTATE(d, 8);                   \
-    c += d; b ^= c; b = ROTATE(b, 7);                   \
+    a += b; d ^= a; d = ROTATE16(d);                  \
+    c += d; b ^= c; b = ROTATE12(b);                  \
+    a += b; d ^= a; d = ROTATE08(d);                   \
+    c += d; b ^= c; b = ROTATE07(b);                   \
     b = SHUFFLE3(b); c = SHUFFLE2(c); d = SHUFFLE1(d);
 
 #define BLOCK(a, b, c, d)                               \
@@ -201,7 +205,7 @@ int crypto_stream_xor(unsigned char *c, const unsigned char *m, unsigned long lo
         m += BLOCKS * 64;
     }
     if (l) {
-        __attribute__((aligned(16 * BLOCKS)))  unsigned char b[BLOCKS * 64] = {0};
+        __attribute__((aligned(BLOCKS * 16)))  unsigned char b[BLOCKS * 64] = {0};
         long long j;
         BLOCK_SETUP(x0, x1,  x2,  x3, s0, k0, k1, n0, u);
         BLOCK(x0, x1, x2, x3);
