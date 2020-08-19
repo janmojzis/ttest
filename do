@@ -21,8 +21,8 @@ cd "supercop-${version}"
     echo 'gcc -O3 -fomit-frame-pointer -fwrapv -fPIC -fPIE'
     echo 'gcc -Os -fomit-frame-pointer -fwrapv -fPIC -fPIE'
   else
-    #echo 'gcc -march=native -mtune=native -O3 -fomit-frame-pointer -fwrapv -fPIC -fPIE'
-    #echo 'clang -march=native -mtune=native -O3 -fomit-frame-pointer -fwrapv -fPIC -fPIE'
+    echo 'gcc -march=native -mtune=native -O3 -fomit-frame-pointer -fwrapv -fPIC -fPIE'
+    echo 'clang -march=native -mtune=native -O3 -fomit-frame-pointer -fwrapv -fPIC -fPIE'
     #echo 'gcc -march=native -mtune=native -Os -fomit-frame-pointer -fwrapv -fPIC -fPIE'
     #echo 'clang -march=native -mtune=native -Os -fomit-frame-pointer -fwrapv -fPIC -fPIE'
     #echo 'gcc -march=native -mtune=native -O2 -fomit-frame-pointer -fwrapv -fPIC -fPIE'
@@ -74,4 +74,4 @@ echo "========================================================="
 sed s'/#include "crypto_stream.h"//' crypto_stream/chacha20/mojzis/vec/crypto_stream_chacha20.c > x.c
 gcc -O3 -Wall -c x.c
 
-#gcc -dM -E - </dev/null
+gcc -march=native -dM -E - </dev/null

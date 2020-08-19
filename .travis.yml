@@ -5,6 +5,7 @@ os:
 
 arch:
   - s390x
+  - amd64
 
 compiler:
   - gcc
