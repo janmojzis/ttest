@@ -24,8 +24,10 @@ Public domain.
 #define PARALLEL 1
 #endif
 
-#if defined(__AVX2__)
-#define BLOCKS 2
+#if defined(__AVX512F__)
+#define BLOCKS 4
+#elif defined(__AVX2__)
+#define BLOCKS 4
 #else
 #define BLOCKS 1
 #endif
@@ -47,7 +49,21 @@ static uint32_t _bs(uint32_t u) {
 }
 #endif
 
-#if BLOCKS == 2
+#if BLOCKS == 4
+#define SHUFFLE1(x) (vec32) vec32_shuffle(x, (vec32) { 1, 2, 3, 0, 5, 6, 7, 4, 9, 10, 11, 8, 13, 14, 15, 12 })
+#define SHUFFLE2(x) (vec32) vec32_shuffle(x, (vec32) { 2, 3, 0, 1, 6, 7, 4, 5, 10, 11, 8, 9, 14, 15, 12, 13 })
+#define SHUFFLE3(x) (vec32) vec32_shuffle(x, (vec32) { 3, 0, 1, 2, 7, 4, 5, 6, 11, 8, 9, 10, 15, 12, 13, 14 })
+#define NONCE(n0, x) ((vec32) { (x), (x) >> 32, 0, 0, (x) + 1, ((x) + 1) >> 32, 0, 0 , (x) + 2, ((x) + 2) >> 32, 0, 0, (x) + 3, ((x) + 3) >> 32, 0, 0} + n0);
+#define vec32_EXPAND(a, b, c, d) (vec32) { _bs(a), _bs(b), _bs(c), _bs(d), _bs(a), _bs(b), _bs(c), _bs(d), _bs(a), _bs(b), _bs(c), _bs(d), _bs(a), _bs(b), _bs(c), _bs(d) }
+#define BLOCK_REORDER(a, b, c, d)                                                                                                                                                               \
+{                                                                                                                                                                                               \
+  vec32 aa = {_bs(a[0]), _bs(a[1]), _bs(a[2]), _bs(a[3]),  _bs(b[0]), _bs(b[1]), _bs(b[2]), _bs(b[3]), _bs(c[0]), _bs(c[1]), _bs(c[2]), _bs(c[3]), _bs(d[0]), _bs(d[1]), _bs(d[2]), _bs(d[3]) };\
+  vec32 bb = {_bs(a[4]), _bs(a[5]), _bs(a[6]), _bs(a[7]),  _bs(b[4]), _bs(b[5]), _bs(b[6]), _bs(b[7]), _bs(c[4]), _bs(c[5]), _bs(c[6]), _bs(c[7]), _bs(d[4]), _bs(d[5]), _bs(d[6]), _bs(d[7]) };\
+  vec32 cc = {_bs(a[8]), _bs(a[9]), _bs(a[10]),_bs(a[11]),_bs(b[8]), _bs(b[9]), _bs(b[10]),_bs(b[11]),_bs(c[8]),  _bs(c[9]),_bs(c[10]),_bs(c[11]), _bs(d[8]), _bs(d[9]),_bs(d[10]),_bs(d[11]) };\
+  vec32 dd = {_bs(a[12]),_bs(a[13]),_bs(a[14]),_bs(a[15]),_bs(b[12]),_bs(b[13]),_bs(b[14]),_bs(b[15]),_bs(c[12]),_bs(c[13]),_bs(c[14]),_bs(c[15]),_bs(d[12]),_bs(d[13]),_bs(d[14]),_bs(d[15]) };\
+  a = aa; b = bb; c = cc; d = dd;                                                                                                                                                               \
+}
+#elif BLOCKS == 2
 #define SHUFFLE1(x) (vec32) vec32_shuffle(x, (vec32) { 1, 2, 3, 0, 5, 6, 7, 4 })
 #define SHUFFLE2(x) (vec32) vec32_shuffle(x, (vec32) { 2, 3, 0, 1, 6, 7, 4, 5 })
 #define SHUFFLE3(x) (vec32) vec32_shuffle(x, (vec32) { 3, 0, 1, 2, 7, 4, 5, 6 })
