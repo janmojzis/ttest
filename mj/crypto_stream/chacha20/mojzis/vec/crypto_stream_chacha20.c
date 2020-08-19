@@ -146,7 +146,7 @@ static uint32_t _bs(uint32_t u) {
     *(vec32 *)((o) + 32 * BLOCKS) = (c) ^ *(vec32 *)((i) + 32 * BLOCKS);\
     *(vec32 *)((o) + 48 * BLOCKS) = (d) ^ *(vec32 *)((i) + 48 * BLOCKS);
 
-static __attribute__((aligned(16))) const unsigned char s[16] = "expand 32-byte k";
+static __attribute__((aligned(BLOCKS * 16))) const unsigned char s[16] = "expand 32-byte k";
 
 int crypto_stream_xor(unsigned char *c, const unsigned char *m, unsigned long long l, const unsigned char *n, const unsigned char *k) {
 
