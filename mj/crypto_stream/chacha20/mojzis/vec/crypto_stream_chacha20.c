@@ -27,7 +27,7 @@ Public domain.
 #if defined(__AVX512F__)
 #define BLOCKS 4
 #elif defined(__AVX2__)
-#define BLOCKS 4
+#define BLOCKS 2
 #else
 #define BLOCKS 1
 #endif
@@ -201,7 +201,7 @@ int crypto_stream_xor(unsigned char *c, const unsigned char *m, unsigned long lo
         m += BLOCKS * 64;
     }
     if (l) {
-        __attribute__((aligned(16)))  unsigned char b[BLOCKS * 64] = {0};
+        __attribute__((aligned(16 * BLOCKS)))  unsigned char b[BLOCKS * 64] = {0};
         long long j;
         BLOCK_SETUP(x0, x1,  x2,  x3, s0, k0, k1, n0, u);
         BLOCK(x0, x1, x2, x3);
