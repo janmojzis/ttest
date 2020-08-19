@@ -53,6 +53,10 @@ static uint32_t _bs(uint32_t u) {
 #define SHUFFLE1(x) (vec32) vec32_shuffle(x, (vec32) { 1, 2, 3, 0, 5, 6, 7, 4, 9, 10, 11, 8, 13, 14, 15, 12 })
 #define SHUFFLE2(x) (vec32) vec32_shuffle(x, (vec32) { 2, 3, 0, 1, 6, 7, 4, 5, 10, 11, 8, 9, 14, 15, 12, 13 })
 #define SHUFFLE3(x) (vec32) vec32_shuffle(x, (vec32) { 3, 0, 1, 2, 7, 4, 5, 6, 11, 8, 9, 10, 15, 12, 13, 14 })
+#define ROTATE07(x) ((x) << ((vec32){ 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7})) ^ ((x) >> ((vec32){25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25}))
+#define ROTATE08(x) ((x) << ((vec32){ 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8})) ^ ((x) >> ((vec32){24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24}))
+#define ROTATE12(x) ((x) << ((vec32){12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12})) ^ ((x) >> ((vec32){20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20}))
+#define ROTATE16(x) ((x) << ((vec32){16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16})) ^ ((x) >> ((vec32){16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16}))
 #define NONCE(n0, x) ((vec32) { (x), (x) >> 32, 0, 0, (x) + 1, ((x) + 1) >> 32, 0, 0 , (x) + 2, ((x) + 2) >> 32, 0, 0, (x) + 3, ((x) + 3) >> 32, 0, 0} + n0);
 #define vec32_EXPAND(a, b, c, d) (vec32) { _bs(a), _bs(b), _bs(c), _bs(d), _bs(a), _bs(b), _bs(c), _bs(d), _bs(a), _bs(b), _bs(c), _bs(d), _bs(a), _bs(b), _bs(c), _bs(d) }
 #define BLOCK_REORDER(a, b, c, d)                                                                                                                                                               \
@@ -67,6 +71,10 @@ static uint32_t _bs(uint32_t u) {
 #define SHUFFLE1(x) (vec32) vec32_shuffle(x, (vec32) { 1, 2, 3, 0, 5, 6, 7, 4 })
 #define SHUFFLE2(x) (vec32) vec32_shuffle(x, (vec32) { 2, 3, 0, 1, 6, 7, 4, 5 })
 #define SHUFFLE3(x) (vec32) vec32_shuffle(x, (vec32) { 3, 0, 1, 2, 7, 4, 5, 6 })
+#define ROTATE07(x) ((x) << ((vec32){ 7, 7, 7, 7, 7, 7, 7, 7})) ^ ((x) >> ((vec32){25,25,25,25,25,25,25,25}))
+#define ROTATE08(x) ((x) << ((vec32){ 8, 8, 8, 8, 8, 8, 8, 8})) ^ ((x) >> ((vec32){24,24,24,24,24,24,24,24}))
+#define ROTATE12(x) ((x) << ((vec32){12,12,12,12,12,12,12,12})) ^ ((x) >> ((vec32){20,20,20,20,20,20,20,20}))
+#define ROTATE16(x) ((x) << ((vec32){16,16,16,16,16,16,16,16})) ^ ((x) >> ((vec32){16,16,16,16,16,16,16,16}))
 #define NONCE(n0, x) ((vec32) { (x), (x) >> 32, 0, 0, (x) + 1, ((x) + 1) >> 32, 0, 0 } + n0);
 #define vec32_EXPAND(a, b, c, d) (vec32) { _bs(a), _bs(b), _bs(c), _bs(d), _bs(a), _bs(b), _bs(c), _bs(d) }
 #define BLOCK_REORDER(a, b, c, d)                                                                               \
@@ -81,6 +89,10 @@ static uint32_t _bs(uint32_t u) {
 #define SHUFFLE1(x) (vec32)vec32_shuffle(x, (vec32) { 1, 2, 3, 0 })
 #define SHUFFLE2(x) (vec32)vec32_shuffle(x, (vec32) { 2, 3, 0, 1 })
 #define SHUFFLE3(x) (vec32)vec32_shuffle(x, (vec32) { 3, 0, 1, 2 })
+#define ROTATE07(x) ((x) << ((vec32){ 7, 7, 7, 7})) ^ ((x) >> ((vec32){25,25,25,25}))
+#define ROTATE08(x) ((x) << ((vec32){ 8, 8, 8, 8})) ^ ((x) >> ((vec32){24,24,24,24}))
+#define ROTATE12(x) ((x) << ((vec32){12,12,12,12})) ^ ((x) >> ((vec32){20,20,20,20}))
+#define ROTATE16(x) ((x) << ((vec32){16,16,16,16})) ^ ((x) >> ((vec32){16,16,16,16}))
 #define NONCE(n0, x) ((vec32) { (x), (x) >> 32, 0, 0 } + n0);
 #define vec32_EXPAND(a, b, c, d) (vec32) { _bs(a), _bs(b), _bs(c), _bs(d) }
 #define BLOCK_REORDER(a, b, c, d)                                   \
@@ -96,11 +108,6 @@ static uint32_t _bs(uint32_t u) {
 
 /* chacha */
 
-#define ROTATE(x, c) ((x) << (c)) ^ ((x) >> (32 - (c)))
-#define ROTATE07(x) ((x) << ((vec32){ 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7})) ^ ((x) >> ((vec32){25,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25}))
-#define ROTATE08(x) ((x) << ((vec32){ 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8})) ^ ((x) >> ((vec32){24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24}))
-#define ROTATE12(x) ((x) << ((vec32){12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12})) ^ ((x) >> ((vec32){20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20}))
-#define ROTATE16(x) ((x) << ((vec32){16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16})) ^ ((x) >> ((vec32){16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16}))
 
 #define TWOROUNDS(a, b, c, d)                           \
     a += b; d ^= a; d = ROTATE16(d);                  \
