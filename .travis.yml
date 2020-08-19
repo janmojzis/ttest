@@ -9,7 +9,6 @@ arch:
 
 compiler:
   - gcc
-  - clang
 
 script:
   - sudo gcc -o be be.c
